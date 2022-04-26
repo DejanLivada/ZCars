@@ -56,17 +56,30 @@ def mycredits():
 
 
 def play():
+    upaljene_kontrole_misem = False
     program_radi = True
     while program_radi:
         for dogadjaj in pygame.event.get():
             if dogadjaj.type == pygame.QUIT:
                 sys.exit()
+            if dogadjaj.type == pygame.MOUSEBUTTONUP:
+                upaljene_kontrole_misem = True
         dugmici = pygame.key.get_pressed()
-        prozor.fill((153, 0, 255))
-        rotirana_slika = pygame.transform.rotate(igrac.slika, igrac.pravac)
         if dugmici[pygame.K_LEFT]:
             igrac.pravac += 7
-        igrac.pozicija = igrac.pozicija + Vector2(igrac.brzina.x, -igrac.brzina.y)
+        if dugmici[pygame.K_RIGHT]:
+            igrac.pravac -= 7
+        dugmici = pygame.mouse.get_pressed()
+        if dugmici[0] and upaljene_kontrole_misem:
+            xm, ym = pygame.mouse.get_pos()
+            if xm < Xres // 2:
+                igrac.pravac += 7
+            else:
+                igrac.pravac -= 7
+
+        igrac.pozicija = igrac.pozicija + igrac.brzina.rotate(-igrac.pravac)
+        prozor.fill((153, 0, 255))
+        rotirana_slika = pygame.transform.rotate(igrac.slika, igrac.pravac)
         prozor.blit(rotirana_slika, igrac.pozicija - rotirana_slika.get_rect().center)
         pygame.display.flip()
         sat.tick(30)
